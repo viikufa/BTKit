@@ -236,6 +236,7 @@ public extension RuuviTag {
         }
     }
     
+    @available(*, deprecated, message: "Use pressureUnit: Measurement<UnitPressure> instead")
     var pressure: Double? {
         switch self {
         case .v2(let data):
@@ -251,22 +252,25 @@ public extension RuuviTag {
         }
     }
     
+    @available(*, deprecated, message: "Use pressureUnit: Measurement<UnitPressure> instead")
     var inHg: Double? {
-        if let pressure = pressure {
-            return pressure / 33.86389
+        if let pressure = pressureUnit {
+            return pressure.converted(to: .inchesOfMercury).value
         } else {
             return nil
         }
     }
     
+    @available(*, deprecated, message: "Use pressureUnit: Measurement<UnitPressure> instead")
     var mmHg: Double? {
-        if let pressure = pressure {
-            return pressure / 1.333223684
+        if let pressure = pressureUnit {
+            return pressure.converted(to: .millimetersOfMercury).value
         } else {
             return nil
         }
     }
     
+    @available(*, deprecated, message: "Use temperatureUnit: Measurement<UnitTemperature> instead")
     var celsius: Double? {
         switch self {
         case .v2(let data):
@@ -286,17 +290,35 @@ public extension RuuviTag {
         return v5?.mac
     }
     
+    @available(*, deprecated, message: "Use temperatureUnit: Measurement<UnitTemperature> instead")
     var fahrenheit: Double? {
-        if let celsius = celsius {
-            return (celsius * 9.0 / 5.0) + 32.0
+        if let temperature = temperatureUnit {
+            return temperature.converted(to: .fahrenheit).value
+        } else {
+            return nil
+        }
+    }
+
+    @available(*, deprecated, message: "Use temperatureUnit: Measurement<UnitTemperature> instead")
+    var kelvin: Double? {
+        if let temperature = temperatureUnit {
+            return temperature.converted(to: .kelvin).value
         } else {
             return nil
         }
     }
     
-    var kelvin: Double? {
+    var temperatureUnit: Measurement<UnitTemperature>? {
         if let celsius = celsius {
-            return celsius + 273.15
+            return .init(value: celsius, unit: .celsius)
+        } else {
+            return nil
+        }
+    }
+
+    var pressureUnit: Measurement<UnitPressure>? {
+        if let hPa = pressure {
+            return .init(value: hPa, unit: .hectopascals)
         } else {
             return nil
         }
